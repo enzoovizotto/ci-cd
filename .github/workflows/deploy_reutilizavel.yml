@@ -1,0 +1,71 @@
+name: "Deploy Azure Functions Package"
+on:
+  workflow_call:
+    inputs:
+      artifact-name:
+        description: "Nome do artefato"
+        required: false
+        type: string
+        default: "build-${{ github.event.repository.name }}-${{ github.run_id }}"
+      environment:
+        description: "Ambiente"
+        required: true
+        type: string
+      app-name:
+        description: "Nome do function app"
+        required: true
+        type: string
+      slot-name:
+        description: "Nome do slot"
+        required: false
+        type: string
+        default: "production"
+      publish-profile:
+        description: "Publish Profile"
+        required: true
+        type: string
+
+    secrets: 
+        publish-profile:
+            description: "Publish Profile"
+            required: false
+    outputs:
+      url:
+        value: ${{ jobs.build-artifact.outputs.url }}
+        description: "URL do Function App"
+
+env:
+  ARTIFACT_NAME: ${{ inputs.artifact-name }}
+  APP_NAME: ${{ inputs.app-name }}
+  SLOT_NAME: ${{ inputs.slot-name }}
+  PUBLISH_PROFILE_NAME: ${{inputs.publish-profile}}
+
+jobs:
+  build-artifact:
+    name: "Azure Functions Deploy"
+    runs-on: ubuntu-latest
+    outputs:
+      url: ${{ steps.deployFunctionApp.outputs.app-url }}
+    environment: 
+        name: ${{ inputs.environment }}
+        url: ${{ steps.deployFunctionApp.outputs.app-url }}
+    steps:
+      - name: "Download Artifact"
+        uses: actions/download-artifact@v4
+        with:
+            name: ${{ env.ARTIFACT_NAME }}
+
+      - name: "Unzip Artifact"
+        shell: bash
+        run: |
+          unzip ${{env.ARTIFACT_NAME}}.zip -d .
+          rm ${{env.ARTIFACT_NAME}}.zip
+
+      - name: "Run process of Azure Functions Deploy"
+        uses: Azure/functions-action@v1
+        id: deployFunctionApp
+        with:
+          app-name: ${{ env.APP_NAME }}
+          slot-name: ${{ env.SLOT_NAME }}
+          package: "."
+          publish-profile: ${{ secrets[env.PUBLISH_PROFILE_NAME] }}

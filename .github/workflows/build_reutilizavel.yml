@@ -1,0 +1,73 @@
+name: "Build Azure Functions Package"
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        type: string
+        description: "Versão do Node.js"
+        required: true
+        default: "20"
+      repo-path:
+        type: string
+        description: "Pasta onde se encontra o código fonte do Azure Function"
+        required: false
+        default: "."
+      output-path:
+        type: string
+        description: "Nome do arquivo de saída"
+        required: false
+        default: "."
+      artifact-name:
+        type: string
+        description: "Nome do artefato de saída"
+        required: false
+        default: "build-${{ github.event.repository.name }}-${{ github.run_id }}"
+      package-manager:
+        type: string
+        description: "Gerenciador de pacotes"
+        required: false
+        default: "npm"
+      build-command:
+        type: string
+        description: "Comando para build"
+        required: false
+        default: "build"
+
+env:
+  NODE_VERSION: ${{ inputs.node-version }}
+  REPO_PATH: ${{ inputs.repo-path }}
+  ARTIFACT_NAME: ${{ inputs.artifact-name }}
+  OUTPUT_PATH: ${{ inputs.output-path }}
+
+jobs:
+  build-artifact:
+    name: "Azure Functions Build"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
+      - name: "Setup Node.js ${{ env.NODE_VERSION }}"
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+
+      - name: "Run Build"
+        shell: bash
+        run: |
+          pushd './${{ env.REPO_PATH }}'
+          ${{ inputs.package-manager == 'yarn' && 'yarn' || 'npm run' }} ${{ inputs.build-command }} ${{ inputs.package-manager == 'npm' && '--if-present' || '' }}
+
+      - name: "Zip build artifact"
+        shell: bash
+        run: |
+          pushd './${{ env.REPO_PATH }}/${{ env.OUTPUT_PATH }}'
+          zip -r ${{env.ARTIFACT_NAME}}.zip * 
+
+      - name: "Upload Artifact of Function App"
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{env.ARTIFACT_NAME}}
+          path: ${{ env.REPO_PATH }}/${{ env.OUTPUT_PATH != '.' && env.OUTPUT_PATH || '' }}/${{env.ARTIFACT_NAME}}.zip
+          if-no-files-found: error
