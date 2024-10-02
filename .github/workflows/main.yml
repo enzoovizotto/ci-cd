@@ -2,6 +2,7 @@ name: continuous-integration-continuous-delivery
 on:
   push:
    branches: ['main']
+  workflow_dispatch:
 
 jobs: 
 #   job-build:
@@ -30,7 +31,7 @@ jobs:
 
     steps: 
     - name: run build
-      uses: ./enzoovizotto/ci-cd/.github/workflows/build_reutilizavel.yml@main
+      uses: ./build_reutilizavel.yml@main
       with: 
         node-version: 20
 
