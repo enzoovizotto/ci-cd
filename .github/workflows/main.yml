@@ -31,7 +31,7 @@ jobs:
 
     steps: 
     - name: run build
-      uses: ./build_reutilizavel.yml@main
+      uses: ./build_reutilizavel.yml
       with: 
         node-version: 20
 
@@ -43,7 +43,7 @@ jobs:
 
     steps: 
     - name: deploy
-      uses: ./enzoovizotto/ci-cd/.github/workflows/deploy_reutilizavel.yml@main
+      uses: ./deploy_reutilizavel.yml
       with:
         name: artifact
         enviroment: production
