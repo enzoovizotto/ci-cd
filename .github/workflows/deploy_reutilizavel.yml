@@ -28,7 +28,7 @@ on:
     secrets: 
         publish-profile:
             description: "Publish Profile"
-            required: false
+            required: true
     outputs:
       url:
         value: ${{ jobs.build-artifact.outputs.url }}
