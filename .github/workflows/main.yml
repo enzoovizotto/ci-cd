@@ -43,7 +43,9 @@ jobs:
     with:
       environment: production
       app-name: "ci-cd-enzo"
-      publish-profile: ${{secrets.AZURE_PUBLISH_PROFILE}}
+      publish-profile: "AZURE_PUBLISH_PROFILE"
+    secrets:
+      publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
 
 
         
