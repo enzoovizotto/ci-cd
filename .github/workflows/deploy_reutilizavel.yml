@@ -26,9 +26,9 @@ on:
         type: string
 
     secrets: 
-        publish-profile:
-          description: "Publish Profile"
-          required: true
+      publish-profile:
+        description: "Publish Profile"
+        required: true
     outputs:
       url:
         value: ${{ jobs.build-artifact.outputs.url }}
@@ -65,7 +65,6 @@ jobs:
         uses: Azure/functions-action@v1
         id: deployFunctionApp
         with:
-          
           app-name: ${{ env.APP_NAME }}
           slot-name: ${{ env.SLOT_NAME }}
           package: "."

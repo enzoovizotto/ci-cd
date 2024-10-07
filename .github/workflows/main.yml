@@ -44,9 +44,7 @@ jobs:
       environment: production
       app-name: "functionApp-Luis"
       publish-profile: "AZURE_PUBLISH_PROFILE"
-    secrets:
-      publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
-
+    secrets: inherit
 
         
   
