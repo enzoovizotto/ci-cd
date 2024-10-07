@@ -65,6 +65,7 @@ jobs:
         uses: Azure/functions-action@v1
         id: deployFunctionApp
         with:
+          
           app-name: ${{ env.APP_NAME }}
           slot-name: ${{ env.SLOT_NAME }}
           package: "."

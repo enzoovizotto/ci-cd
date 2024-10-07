@@ -42,7 +42,7 @@ jobs:
     uses: enzoovizotto/ci-cd/.github/workflows/deploy_reutilizavel.yml@main
     with:
       environment: production
-      app-name: "ci-cd-enzo"
+      app-name: "functionApp-Luis"
       publish-profile: "AZURE_PUBLISH_PROFILE"
     secrets:
       publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
