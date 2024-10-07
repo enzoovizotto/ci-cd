@@ -52,13 +52,18 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
 
+      - name: "install dependencies"
+        shell: bash
+        run: |
+          pushd './${{ env.REPO_PATH }}'
+          npm i
 
       - name: "Run Build"
         shell: bash
         run: |
           pushd './${{ env.REPO_PATH }}'
-          ${{ inputs.package-manager == 'yarn' && 'yarn' || 'npm run' }} ${{ inputs.build-command }} ${{ inputs.package-manager == 'npm' && '--if-present' || '' }}
-
+          npm run build
+  
       - name: "Zip build artifact"
         shell: bash
         run: |
