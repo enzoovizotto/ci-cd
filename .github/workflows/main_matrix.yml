@@ -1,0 +1,34 @@
+name: continuous-integration-continuous-delivery
+on:
+  push:
+   branches: ['main']
+  workflow_dispatch:
+
+jobs: 
+
+  job-build:
+
+    name: "build"
+    uses: enzoovizotto/ci-cd/.github/workflows/build_reutilizavel.yml@main
+    with: 
+      node-version: 20
+
+
+
+  job-deploy:
+    needs: job-build
+
+    name: deploy
+    uses: enzoovizotto/ci-cd/.github/workflows/deploy_matrix.yml@main
+    with:
+      environment: production
+      app-name: "functionApp-Luis"
+      publish-profile: "AZURE_PUBLISH_PROFILE"
+      matrix: >
+        {
+          "app-name": ["functionApp-Luis", "myapp", "matrix_enzo"]
+        }
+    secrets: inherit
+
+        
+  
